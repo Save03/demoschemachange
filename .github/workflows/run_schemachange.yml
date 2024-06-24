@@ -1,0 +1,34 @@
+name: run_schemachange
+on: 
+  workflow_dispatch:
+
+  push:
+    branches:
+      - 'dev'
+
+jobs:
+  run_schemachange_dev:
+    environment: dev
+    runs-on: ubuntu-latest
+    container:
+        image: python:3.8-bullseye
+        env:          
+          SNOWFLAKE_PASSWORD: ${{secrets.SNOWFLAKE_PWD}}
+          SNOWFLAKE_USER: ${{ vars.SNOWFLAKE_USER }}
+          SNOWFLAKE_ENV: ${{ vars.MWAA_ENV }}
+        volumes:
+          - /var/run/secrets/eks.amazonaws.com/serviceaccount/token:/var/run/secrets/eks.amazonaws.com/serviceaccount/token
+    steps:
+      #checkout the repo
+      - uses: actions/checkout@v4
+
+      #install schemachange
+      - name: schemachange installation
+        run: |
+          pip install schemachange==3.6.0
+
+      #run schemachange
+      - name: run schemachange
+        run: |
+          cd ./db_objects
+          schemachange deploy --config-folder .
