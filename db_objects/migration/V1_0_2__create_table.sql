@@ -1,0 +1,4 @@
+use role sysadmin;
+use role demo_db;
+
+CREATE TABLE CUSTOMER_SCHEMA.CUSTOMERS (ID INT,NAME VARCHAR,EMAIL VARCHAR);
